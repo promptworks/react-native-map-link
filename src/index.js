@@ -64,9 +64,23 @@ export async function showLocation (options) {
 
   switch (app) {
     case 'apple-maps':
-      url = prefixes['apple-maps']
-      url = (useSourceDestiny) ? `${url}?saddr=${sourceLatLng}&daddr=${latlng}` : `${url}?ll=${latlng}`
-      url += `&q=${title ? `${encodedTitle}&address=${encodedTitle}` : 'Location'}`
+      // url = prefixes['apple-maps']
+      // url = (useSourceDestiny) ? `${url}?saddr=${sourceLatLng}&daddr=${latlng}` : `${url}?ll=${latlng}`
+      // url += `&q=${title ? `${encodedTitle}&address=${encodedTitle}` : 'Location'}`
+
+      /**
+       * The above logic was replaced to better suite our needs with the mss project.
+       */
+
+      url =
+        `${prefixes["apple-maps"]}?` +
+        [
+          sourceLatLng ? `saddr=${sourceLatLng}` : null,
+          latlng ? `daddr=${latlng}` : null,
+          title && !latlng ? `address=${encodedTitle}` : null
+        ]
+          .filter(x => x)
+          .join("&");
       break
     case 'google-maps':
       let useTitleForQuery = !options.googleForceLatLon && title
