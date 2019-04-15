@@ -42,7 +42,7 @@ export async function showLocation (options) {
 
   let lat = parseFloat(options.latitude)
   let lng = parseFloat(options.longitude)
-  let latlng = `${lat},${lng}`
+  let latlng = lat && lng ? `${lat},${lng}` : null
   let title = options.title && options.title.length ? options.title : null
   let encodedTitle = encodeURIComponent(title)
   let app = options.app && options.app.length ? options.app : null
@@ -75,9 +75,11 @@ export async function showLocation (options) {
       url =
         `${prefixes["apple-maps"]}?` +
         [
-          sourceLatLng ? `saddr=${sourceLatLng}` : null,
-          latlng ? `daddr=${latlng}` : null,
-          title && !latlng ? `address=${encodedTitle}` : null
+          sourceLatLng && latlng
+            ? `saddr=${sourceLatLng}&daddr=${latlng}`
+            : null,
+          latlng && !sourceLatLng ? `ll=${latlng}` : null,
+          title ? `address=${encodedTitle}` : null
         ]
           .filter(x => x)
           .join("&");
